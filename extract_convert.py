@@ -11,6 +11,7 @@ from bert4keras.snippets import open
 from bert4keras.snippets import text_segmentate
 from bert4keras.snippets import parallel_apply
 from snippets import *
+from numpyencoder import NumpyEncoder
 
 # 初始化
 maxlen = 256
@@ -60,7 +61,9 @@ def load_data(filename):
     """
     D = []
     with open(filename, encoding='utf-8') as f:
+        i=0
         for l in f:
+            i+=1
             l = json.loads(l)
             text = '\n'.join([d['sentence'] for d in l['text']])
             D.append((text, l['summary']))
@@ -81,7 +84,6 @@ def convert(data):
     print(u'抽取结果的平均指标: %s' % (total_metric / len(D)))
     return D
 
-
 if __name__ == '__main__':
 
     data_random_order_json = data_json[:-5] + '_random_order.json'
@@ -101,7 +103,7 @@ if __name__ == '__main__':
 
     with open(data_extract_json, 'w', encoding='utf-8') as f:
         for d in data:
-            f.write(json.dumps(d, ensure_ascii=False) + '\n')
+            f.write(json.dumps(d, ensure_ascii=False,cls=NumpyEncoder) + '\n')
 
     print(u'输入数据：%s' % data_json)
     print(u'数据顺序：%s' % data_random_order_json)
